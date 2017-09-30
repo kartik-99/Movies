@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Movies</string>
+    <string name="add_to_favourites">Add to\nfavourites</string>
+    <string name="added_to_favourites">Remove from\nfavourites</string>
+    <string name="category">Category :</string>
+    <string name="please_add_movie">Add your favourite movies to view them here</string>
+    <string name="no_related_videos_avaliable">No related videos avaliable</string>
+    <string name="related_videos">Related Videos :</string>
+    <string name="read_reviews">Read reviews</string>
+    <string name="no_reviews_avaliable">No reviews avaliable</string>
+</resources>

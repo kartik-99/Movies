@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.kartik.movies.MainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/category"
+        android:textSize="20dp"
+        android:textColor="#fff"
+        android:background="#2590e2"
+        android:gravity="center"
+        android:id="@+id/textView"
+        android:paddingLeft="20dp"/>
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toEndOf="@+id/textView"
+        android:paddingRight="20dp"/>
+    <GridView
+        android:id="@+id/gridView"
+        android:numColumns="2"
+        android:gravity="center"
+        android:columnWidth="200dp"
+        android:stretchMode="columnWidth"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/categorySpinner"/>
+
+    <TextView
+        android:id="@+id/no_favourites"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/please_add_movie"/>
+
+
+</RelativeLayout>
