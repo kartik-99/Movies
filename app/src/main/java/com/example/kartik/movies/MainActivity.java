@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     GridAdapter adapter;
     Cursor cursor;
     TextView noFavourites;
-    int selected = 0;
+    int selected = 0, position = 0;
     //TODO insert your api key here
     public static final String api_key = "";
 
@@ -63,6 +63,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        position = gridView.getFirstVisiblePosition();
+        outState.putInt("position", position);
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        int pos = savedInstanceState.getInt("position");
+        gridView.setSelection(pos);
     }
 
     @Override
