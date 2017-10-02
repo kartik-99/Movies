@@ -1,8 +1,11 @@
 package com.example.kartik.movies;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //import com.example.kartik.movies.database.GetFavourites;
 import com.example.kartik.movies.database.MoviesContract;
@@ -31,8 +35,9 @@ public class MainActivity extends AppCompatActivity {
     Cursor cursor;
     TextView noFavourites;
     int selected = 0, position = 0;
+    boolean previous = false;
     //TODO insert your api key here
-    public static final String api_key = "";
+    public static final String api_key = "891e7c5205a814b83863e346477756aa";
 
     String urlPopular = "https://api.themoviedb.org/3/movie/popular?api_key="+api_key+"&language=en-US&page=1";
     String urlTopRated = "https://api.themoviedb.org/3/movie/top_rated?api_key="+api_key+"&language=en-US&page=1";
@@ -48,8 +53,22 @@ public class MainActivity extends AppCompatActivity {
         noFavourites = (TextView) findViewById(R.id.no_favourites);
         noFavourites.setVisibility(View.GONE);
 
+        if(savedInstanceState!=null){
+            movies = savedInstanceState.getParcelableArrayList("arraylist");
+            previous = true;
+        }
+
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
         spinner.setAdapter(arrayAdapter);
+
+        NetworkInfo info = (NetworkInfo) ((ConnectivityManager)
+                this.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+
+        if (info == null)
+        {
+            Toast.makeText(this, "No internet Connection", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         downloadAndParseData(selected);
 
@@ -70,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         position = gridView.getFirstVisiblePosition();
         outState.putInt("position", position);
+        outState.putParcelableArrayList("arraylist", movies);
     }
 
 
@@ -90,31 +110,56 @@ public class MainActivity extends AppCompatActivity {
 
     private void downloadAndParseData(int i) {
         if(i==0){
-            try {
-                jsonData = new Downloader(MainActivity.this, urlPopular).execute().get();
-                movies.clear();
-                movies = new Parser(this, jsonData).execute().get();
-                setRecyclerView();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            if(!previous){
+                try {
+                    jsonData = new Downloader(MainActivity.this, urlPopular).execute().get();
+                    setRecyclerView();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                if(movies!=null)
+                    movies.clear();
+                try {
+                    movies = new Parser(this, jsonData).execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                previous = false;
             }
+
         }
         else if(i==1){
-            try {
-                jsonData = new Downloader(MainActivity.this, urlTopRated).execute().get();
-                movies.clear();
-                movies = new Parser(this, jsonData).execute().get();
-                setRecyclerView();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            if(!previous){
+                try {
+                    jsonData = new Downloader(MainActivity.this, urlTopRated).execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                if(movies!=null)
+                    movies.clear();
+                try {
+                    movies = new Parser(this, jsonData).execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
+            else
+                previous = false;
         }else{
             displayFavourites();
         }
+
+        setRecyclerView();
     }
 
     public void displayFavourites(){
@@ -133,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
 
                     movies.add(new Movie(id, name, posterPath));
                 }while(cursor.moveToNext());
-                setRecyclerView();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

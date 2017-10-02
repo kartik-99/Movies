@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.util.LongSparseArray;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,7 +40,7 @@ public class Parser extends AsyncTask<Void, Void, ArrayList<Movie>> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        Log.d(TAG, "onPreExecute: parser reached");
+
 
         pd = new ProgressDialog(c);
         pd.setTitle("Please wait...");
@@ -51,14 +50,12 @@ public class Parser extends AsyncTask<Void, Void, ArrayList<Movie>> {
 
     @Override
     protected ArrayList<Movie> doInBackground(Void... params) {
-        Log.d(TAG, "doInBackground: parser reached");
         return parse();
     }
 
     @Override
     protected void onPostExecute(final ArrayList<Movie> movies) {
         super.onPostExecute(movies);
-        Log.d(TAG, "onPosExecute: parser reached");
         pd.dismiss();
         if(movies==null)
             Toast.makeText(c, "Unable to parse", Toast.LENGTH_LONG).show();
@@ -99,13 +96,11 @@ public class Parser extends AsyncTask<Void, Void, ArrayList<Movie>> {
             JSONObject jsonObject;
 
             movies.clear();
-            Log.d(TAG, object.toString());
 
             for(int i=0; i<jsonArray.length(); i++){ //jsonArray.length()
 
                 jsonObject = jsonArray.getJSONObject(i);
 
-                Log.d(TAG, "parse: ");
                 String title = jsonObject.getString("title");
                 String posterPath = jsonObject.getString("poster_path");
                 long lolol = jsonObject.getLong("id");
